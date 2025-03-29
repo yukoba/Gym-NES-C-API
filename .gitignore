@@ -1,5 +1,6 @@
 /build
 *.so
 *.dll
+*.exe
 *.nes
 /test_c
