@@ -18,3 +18,7 @@ cd ..
 gcc -O3 test_c.c -o test_c -I include -L . -l GymNes -l SDL2
 LD_LIBRARY_PATH=. ./test_c SuperMarioBros.nes
 ```
+
+# Related project
+
+- [Arcade Learning Environment C API](https://github.com/yukoba/Arcade-Learning-Environment-C-API) - Arcade Learning Environment version of this.
