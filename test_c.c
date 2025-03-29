@@ -3,6 +3,20 @@
 #include <SDL2/SDL.h>
 #include "emulator_c.h"
 
+static int sdlKeySymToKeyNo(int sym) {
+    switch (sym) {
+        case 13: return 3; // ENTER = START
+        case 97: return 0; // A
+        case 98: return 1; // B
+        case 115: return 2; // S = SELECT
+        case 1073741903: return 7; // RIGHT
+        case 1073741904: return 6; // LEFT
+        case 1073741905: return 5; // DOWN
+        case 1073741906: return 4; // UP
+        default: return -1;
+    }
+}
+
 int main(int argc, char** argv) {
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <rom_file>\n", argv[0]);
@@ -34,7 +48,6 @@ int main(int argc, char** argv) {
         WINDOW_HEIGHT,
         SDL_WINDOW_SHOWN
     );
-
     if (window == NULL) {
         fprintf(stderr, "Cannot create a window: %s\n", SDL_GetError());
         SDL_Quit();
@@ -56,7 +69,6 @@ int main(int argc, char** argv) {
         IMAGE_WIDTH,
         IMAGE_HEIGHT
     );
-
     if (texture == NULL) {
         fprintf(stderr, "Cannot create a texture: %s\n", SDL_GetError());
         SDL_DestroyRenderer(renderer);
@@ -66,41 +78,14 @@ int main(int argc, char** argv) {
     }
 
     bool running = true;
-    SDL_Event event;
-
     while (running) {
+        SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 running = false;
             } else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
-                int keyNo = -1;
-                switch (event.key.keysym.sym) {
-                    case 13: // ENTER = START
-                        keyNo = 3;
-                        break;
-                    case 97: // A
-                        keyNo = 0;
-                        break;
-                    case 98: // B
-                        keyNo = 1;
-                        break;
-                    case 115: // S = SELECT
-                        keyNo = 2;
-                        break;
-                    case 1073741903: // RIGHT
-                        keyNo = 7;
-                        break;
-                    case 1073741904: // LEFT
-                        keyNo = 6;
-                        break;
-                    case 1073741905: // DOWN
-                        keyNo = 5;
-                        break;
-                    case 1073741906: // UP
-                        keyNo = 4;
-                        break;
-                }
-                if (keyNo != -1) {
+                int keyNo = sdlKeySymToKeyNo(event.key.keysym.sym);
+                if (keyNo >= 0) {
                     if (event.key.state == 0) {
                         *controller &= ~(1 << keyNo);
                     } else {
